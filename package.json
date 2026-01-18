@@ -10,6 +10,10 @@
     "sptc": "./bin/sptc.js",
     "sptcd": "./bin/sptcd.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kagami-arch-jp/sptc.git"
+  },
   "dependencies": {
     "commander": "10.0.1"
   }
