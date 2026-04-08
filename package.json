@@ -1,6 +1,6 @@
 {
   "name": "sptc",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "description": "Simple Pretreat Toolkit CLI",
   "main": "engine/index.js",
   "engines": {

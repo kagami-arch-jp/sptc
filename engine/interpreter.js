@@ -3,7 +3,7 @@ const vm=require('vm')
 const path=require('path')
 const Compiler=require('./compiler')
 const Utils=require('../utils')
-const {generate_uuid, PromiseWithResolvers, formatOutput}=Utils
+const {generate_uuid, PromiseWithResolvers, formatOutput, fileExists}=Utils
 
 /*
   const tt={x: 2, b: [2, 5], c: _=>2, d: /xx/ig}
@@ -200,8 +200,12 @@ function buildContext(ctx0, option) {
 
   ctx.eval=code=>(new vm.Script(code)).runInNewContext(ctx)
 
+  function _joinIncludePath(inc_filename) {
+    return path.resolve(ctx0.__dirname, inc_filename)
+  }
+
   ctx.include=(inc_filename, inc_payload={})=>{
-    const inc=path.resolve(ctx0.__dirname, inc_filename)
+    const inc=_joinIncludePath(inc_filename)
     const [_ctx0, _vm]=Compiler.compileSptcFile(inc, {
       statExpires: priv.statExpires,
       cacheVersion: priv.cacheVersion,
@@ -232,7 +236,7 @@ function buildContext(ctx0, option) {
   }
 
   ctx.include_js=(inc_filename, inc_payload={})=>{
-    const inc=path.resolve(ctx0.__dirname, inc_filename)
+    const inc=_joinIncludePath(inc_filename)
     const jsvm=Utils.compileFile(inc, {
       compileFunc: code=>new vm.Script(code+'; Symbol()[0]=_=>0', inc)
     })
@@ -270,7 +274,7 @@ function buildContext(ctx0, option) {
         }
         if(priv.__autoload_func) {
           let inc_fn=priv.__autoload_func(prop)
-          if(inc_fn) {
+          if(inc_fn && fileExists(_joinIncludePath(inc_fn))) {
             return priv.__autoload_vars[prop]=ctx.include(inc_fn)[prop]
           }
         }
