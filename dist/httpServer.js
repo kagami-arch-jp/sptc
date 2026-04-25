@@ -192,6 +192,7 @@ function buildRequestContext(req, res, {srvDir, debug, env, isRouterMode}) {
 			res.end(state.is_debug? e.stack: '')
 		},
 		isEntry: true,
+		__DEV__: debug? true: false,
 	}
 
 	return [reqCtx, handler]

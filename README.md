@@ -2,6 +2,14 @@
 
 ---
 
+## Documentation
+
+- [English](./docs/README.en.md)
+- [Japanese / 日本語](./docs/README.jp.md)
+- [Chinese / 中文](./docs/README.md)
+
+---
+
 ### sptc
 
 ```

@@ -238,7 +238,7 @@ function buildContext(ctx0, option) {
   ctx.include_js=(inc_filename, inc_payload={})=>{
     const inc=_joinIncludePath(inc_filename)
     const jsvm=Utils.compileFile(inc, {
-      compileFunc: code=>new vm.Script(code+'; Symbol()[0]=_=>0', inc)
+      compileFunc: code=>new vm.Script(code+';\n Symbol()[0]=_=>0', inc)
     })
 
     /*
@@ -246,16 +246,21 @@ function buildContext(ctx0, option) {
       ...inc_payload,
     }*/
 
+    const exports={}
+    const module={exports}
+
     const [jsctx]=buildContext({
       ...ctx0,
       ...inc_payload,
+      module,
+      exports,
     }, {
       isEntry: false,
       masterPriv: priv,
     })
 
     jsvm.runInNewContext(jsctx)
-    return jsctx
+    return Object.assign(jsctx, jsctx.module.exports, jsctx.exports)
   }
 
   ctx.__autoload=fn=>{

@@ -6,11 +6,13 @@ const InterpreterMacro=require('./interpreter-macro')
 const {md5, formatOutput}=require('../utils')
 
 function executeSptcFile(filename, payload, option={}) {
+
 	const {__DEV__, macroOption, mockFileContent}=option
 
 	// using macro preprocessor or provides a mock content will critically degrade the performance
 	// if you really want to use them, specified the option.__DEV__ as true
-	const _option=__DEV__!==true? {}: {
+	const ENABLE_MACRO=__DEV__===true
+	const _option=ENABLE_MACRO? {}: {
 	  mockFileContent,
 		contentWrapper: macroOption?
 		  content=>executeSptcMacroFile(filename, macroOption, content):
@@ -20,6 +22,10 @@ function executeSptcFile(filename, payload, option={}) {
   if(option.isEntry) {
   	_option.isEntry=option.isEntry
   }
+
+	if(ENABLE_MACRO) {
+		_option.mockFileContent=executeSptcMacroFile(filename, _option)
+	}
 
 	const [ctx0, vm]=Compiler.compileSptcFile(filename, _option)
   const [ctx, priv]=Interpreter.buildContext({...payload, ...ctx0}, option)

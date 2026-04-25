@@ -1,2 +1,0 @@
-<?js
-const aaa='LLL'

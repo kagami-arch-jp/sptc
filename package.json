@@ -1,11 +1,12 @@
 {
   "name": "sptc",
-  "version": "0.0.38",
+  "version": "0.1.0",
   "description": "Simple Pretreat Toolkit CLI",
   "main": "engine/index.js",
   "engines": {
     "node": ">=12"
   },
+  "author": "treemonster1993",
   "bin": {
     "sptc": "./bin/sptc.js",
     "sptcd": "./bin/sptcd.js"
@@ -16,5 +17,11 @@
   },
   "dependencies": {
     "commander": "10.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "scripts": {
+    "test": "jest"
   }
 }
