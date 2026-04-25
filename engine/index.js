@@ -12,12 +12,12 @@ function executeSptcFile(filename, payload, option={}) {
 	// using macro preprocessor or provides a mock content will critically degrade the performance
 	// if you really want to use them, specified the option.__DEV__ as true
 	const ENABLE_MACRO=__DEV__===true
-	const _option=ENABLE_MACRO? {}: {
+	const _option=ENABLE_MACRO? {
 	  mockFileContent,
 		contentWrapper: macroOption?
 		  content=>executeSptcMacroFile(filename, macroOption, content):
 		  undefined,
-  }
+  }: {}
 
   if(option.isEntry) {
   	_option.isEntry=option.isEntry
