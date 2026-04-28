@@ -23,7 +23,7 @@ function executeSptcFile(filename, payload, option={}) {
   	_option.isEntry=option.isEntry
   }
 
-	if(ENABLE_MACRO) {
+	if(ENABLE_MACRO && !_option.mockFileContent) {
 		_option.mockFileContent=executeSptcMacroFile(filename, _option)
 	}
 
