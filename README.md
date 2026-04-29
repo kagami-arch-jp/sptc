@@ -8,6 +8,12 @@
 - [Japanese / 日本語](./docs/README.jp.md)
 - [Chinese / 中文](./docs/README.md)
 
+## Demo
+
+- [English](./demo/README.en.md)
+- [Japanese / 日本語](./demo/README.jp.md)
+- [中文](./demo/README.md)
+
 ---
 
 ### sptc

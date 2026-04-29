@@ -211,7 +211,7 @@ configSptcFileCache('v1', 60);
 ```sptc
 <?js
 // 设置自动加载函数
-__autoload__(name => {
+__autoload(name => {
   if (name.startsWith('Model_')) {
     return './models/' + name + '.s';
   }
@@ -382,7 +382,7 @@ sptc file.s -d DEBUG,VERBOSE
 ### sptc
 
 ```
-Usage: sptc [options] 
+Usage: sptc [options]
 
 Options:
   -V, --version           output the version number
