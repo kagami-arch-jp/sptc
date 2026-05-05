@@ -29,7 +29,7 @@ function buildMacroContext({filename, ...inherits}) {
   return ctx
 }
 
-function evalExpression(exp, defs) {
+function evalExpression(exp, defs, defines) {
   let ret={
     value: true,
     symbol: 'and',
@@ -64,10 +64,11 @@ function evalExpression(exp, defs) {
       if(r==='and' || r==='or') {
         ret.symbol=r
       }else{
+        const valid=defs.has(r) || defines[r]
         if(ret.symbol==='and') {
-          ret.value=ret.value && defs.has(r)
+          ret.value=ret.value && valid
         }else if(ret.symbol==='or') {
-          ret.value=ret.value || defs.has(r)
+          ret.value=ret.value || valid
         }
       }
     }
@@ -81,7 +82,7 @@ function execute(ctx, ast) {
     const p=ast[i]
     if(p.type===O_IFDEF) {
       const {match, consequent, alternate}=p
-      const sub_tree=evalExpression(match, ctx.defs)? consequent: alternate
+      const sub_tree=evalExpression(match, ctx.defs, ctx.defines)? consequent: alternate
       ret+=execute(ctx, sub_tree)
     }else if(p.type===O_STR) {
       ret+=p.str

@@ -9,13 +9,15 @@ function executeSptcFile(filename, payload, option={}) {
 
 	const {__DEV__, macroOption, mockFileContent}=option
 
+	const macroCtx={}
+
 	// using macro preprocessor or provides a mock content will critically degrade the performance
 	// if you really want to use them, specified the option.__DEV__ as true
 	const ENABLE_MACRO=__DEV__===true
 	const _option=ENABLE_MACRO? {
 	  mockFileContent,
 		contentWrapper: macroOption?
-		  content=>executeSptcMacroFile(filename, macroOption, content):
+		  content=>executeSptcMacroFile(macroCtx, filename, macroOption, content):
 		  undefined,
   }: {}
 
@@ -24,11 +26,12 @@ function executeSptcFile(filename, payload, option={}) {
   }
 
 	if(ENABLE_MACRO && !_option.mockFileContent) {
-		_option.mockFileContent=executeSptcMacroFile(filename, _option)
+		_option.mockFileContent=executeSptcMacroFile(macroCtx, filename, _option)
 	}
 
 	const [ctx0, vm]=Compiler.compileSptcFile(filename, _option)
   const [ctx, priv]=Interpreter.buildContext({...payload, ...ctx0}, option)
+	Object.assign(priv._defined, macroCtx)
   Interpreter.executeVm(vm, ctx, priv)
   return ctx
 }
@@ -54,10 +57,15 @@ function executeSptcFileEx(...x) {
 	return e
 }
 
-function executeSptcMacroFile(filename, config, mockContent) {
+function executeSptcMacroFile(macroCtx, filename, config, mockContent) {
 	const ast=CompilerMacro.compileSptcMacroFile(filename, mockContent)
 	const ctx=InterpreterMacro.buildMacroContext({filename, ...config})
-	return InterpreterMacro.executeMacroContext(ctx, ast)
+	const ret=InterpreterMacro.executeMacroContext(ctx, ast)
+	Object.assign(macroCtx, [...ctx.defs].reduce((o, k)=>{
+		o[k]=true
+		return o
+	}, {}), ctx.defines)
+	return ret
 }
 
 function includeJsFile(filename, payload) {

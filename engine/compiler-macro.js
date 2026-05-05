@@ -15,7 +15,6 @@ const Tokens={
   T_INCLUDE_ONCE: '#include_once',
 
   T_DEFINE: '#define',
-  T_CALL_DEFINE: '@',
 }
 
 function lexer(content) {
@@ -32,7 +31,7 @@ function lexer(content) {
     T_INCLUDE_ONCE,
 
     T_DEFINE,
-    T_CALL_DEFINE,
+
   }=Tokens
 
   const tokens=[]
@@ -49,7 +48,6 @@ function lexer(content) {
     T_DEFINE,
   ].join('|')+')\\b)((?:\\s+).+)?|(.+)'
   const re=new RegExp('^'+reStr, 'g')
-  const subre=new RegExp(T_CALL_DEFINE+'([A-Za-z\\d_]+)(\\([^)]*?\\)|\\b)|(.)', 'g')
 
   for(let i=0; i<lines.length; i++) {
     if(!lines[i]) {
@@ -60,14 +58,7 @@ function lexer(content) {
       if(tk) {
         tokens.push({tk, tk_params: (tk_params || '').trim()})
       }else if(subline) {
-        subline.replace(subre, (_, call_define, call_define_params, frags)=>{
-          if(call_define) {
-            tokens.push({call_define, call_define_params, source: _})
-          }else if(frags) {
-            tokens.push({frags: true, str: frags})
-          }
-        })
-        tokens.push({frags: true, str: '\n'})
+        tokens.push({frags: true, str: subline+'\n'})
       }
     })
   }
@@ -101,7 +92,7 @@ function transformToAst(tokens) {
     T_INCLUDE_ONCE,
 
     T_DEFINE,
-    T_CALL_DEFINE,
+
   }=Tokens
 
   const tree=[]
@@ -168,14 +159,14 @@ function transformToAst(tokens) {
           Object.assign(d, {
             type: O_DEFINE_CALL,
             fname: funcname,
-            fcall: new vm.Script(`(${argv})=>(${func_body})`).runInNewContext({require}),
+            fcall: new vm.Script(`(${argv})=>(${func_body})`).runInNewContext({require, console}),
           })
         }else if(matched_const) {
           const [, constant, value]=matched_const
           Object.assign(d, {
             type: O_DEFINE_CONST,
             cname: constant,
-            cvalue: value+'',
+            cvalue: JSON.parse(value || ''),
           })
         }else{
           throw new Error('unsupported token: '+JSON.stringify(x))
