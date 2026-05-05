@@ -19,6 +19,7 @@ function executeSptcFile(filename, payload, option={}) {
 		contentWrapper: macroOption?
 		  content=>executeSptcMacroFile(macroCtx, filename, macroOption, content):
 		  undefined,
+		...macroOption
   }: {}
 
   if(option.isEntry) {
@@ -31,6 +32,7 @@ function executeSptcFile(filename, payload, option={}) {
 
 	const [ctx0, vm]=Compiler.compileSptcFile(filename, _option)
   const [ctx, priv]=Interpreter.buildContext({...payload, ...ctx0}, option)
+
 	Object.assign(priv._defined, macroCtx)
   Interpreter.executeVm(vm, ctx, priv)
   return ctx
