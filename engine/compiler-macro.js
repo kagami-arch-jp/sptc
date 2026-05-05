@@ -14,6 +14,8 @@ const Tokens={
   T_INCLUDE: '#include',
   T_INCLUDE_ONCE: '#include_once',
 
+  T_CALL_DEFINE: '@',
+
   T_DEFINE: '#define',
 }
 
@@ -30,6 +32,7 @@ function lexer(content) {
     T_INCLUDE,
     T_INCLUDE_ONCE,
 
+    T_CALL_DEFINE,
     T_DEFINE,
 
   }=Tokens
@@ -48,6 +51,7 @@ function lexer(content) {
     T_DEFINE,
   ].join('|')+')\\b)((?:\\s+).+)?|(.+)'
   const re=new RegExp('^'+reStr, 'g')
+  const subre=new RegExp(T_CALL_DEFINE+'([A-Za-z\\d_]+)(\\([^)]*?\\)|\\b)|(.)', 'g')
 
   for(let i=0; i<lines.length; i++) {
     if(!lines[i]) {
@@ -58,7 +62,14 @@ function lexer(content) {
       if(tk) {
         tokens.push({tk, tk_params: (tk_params || '').trim()})
       }else if(subline) {
-        tokens.push({frags: true, str: subline+'\n'})
+        subline.replace(subre, (_, call_define, call_define_params, frags)=>{
+          if(call_define) {
+            tokens.push({call_define, call_define_params, source: _})
+          }else if(frags) {
+            tokens.push({frags: true, str: frags})
+          }
+        })
+        tokens.push({frags: true, str: '\n'})
       }
     })
   }
