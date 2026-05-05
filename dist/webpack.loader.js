@@ -31,12 +31,15 @@ module.exports=async function(str) {
       __DEV__: false,
       macroOption: {
         defs: [],
+        defines: {...E},
       },
     }
     for(let k in E) {
-      if(k.match(/^[A-Z_\d]+$/) && typeof E[k]==='boolean' && E[k]) {
-        EX.macroOption.defs.push(k)
+      if(k.match(/^[A-Z_\d]+$/)) {
         EX.__DEV__=true
+        if(E[k]===true) {
+          EX.macroOption.defs.push(k)
+        }
       }
     }
 
