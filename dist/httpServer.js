@@ -233,6 +233,7 @@ function fsResponse(fn, res, headers={}) {
 			'.png': 'image/png',
 			'.jpg': 'image/jpeg',
 			'.html': 'text/html',
+			'.svg': 'image/svg+xml',
 		})[ext] || 'application/octet-stream',
 		...headers,
 	})
